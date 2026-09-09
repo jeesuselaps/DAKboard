@@ -1,13 +1,56 @@
 HTML
 <!DOCTYPE html>
-<html>
+<html lang="et">
 <head>
+  <meta charset="UTF-8">
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { margin: 0; padding: 0; background-color: #121212; color: #fff; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
+    .left-panel { width: 35%; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: #1e1e1e; }
+    .right-panel { width: 65%; height: 100%; }
+    #clock { font-size: 3.5rem; font-weight: bold; color: #00d2ff; }
+    #date { font-size: 1.2rem; color: #aaa; margin-bottom: 20px; }
     iframe { width: 100%; height: 100%; border: none; }
+    .rss-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #ffb703; }
+    .rss-container { font-size: 0.95rem; color: #ccc; line-height: 1.5; overflow: hidden; }
   </style>
 </head>
 <body>
-  <iframe src="https://dakboard.com/app/screenPredefined?p=18f5ed0d41323bb89b918f3d7b727422"></iframe>
+  <div class="left-panel">
+    <div>
+      <div id="clock">00:00</div>
+      <div id="date">Laadimine...</div>
+    </div>
+    
+    <div>
+      <div class="rss-title">ERR Uudised</div>
+      <div class="rss-container" id="rss-feed">Laen uudiseid...</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <iframe src="https://www.rainviewer.com/map.html?loc=58.60,25.00,7&o8=1&c=1&o=0&lm=1&a=1"></iframe>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').innerText = now.toLocaleTimeString('et-EE', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('date').innerText = now.toLocaleDateString('et-EE', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.err.ee/rss')
+      .then(res => res.json())
+      .then(data => {
+        const items = data.items.slice(0, 4);
+        let html = '';
+        items.forEach(item => {
+          html += `<p style="margin-bottom:10px;">• ${item.title}</p>`;
+        });
+        document.getElementById('rss-feed').innerHTML = html;
+      })
+      .catch(() => { document.getElementById('rss-feed').innerText = 'Uudiste laadimine ebaõnnestus'; });
+  </script>
 </body>
 </html>
