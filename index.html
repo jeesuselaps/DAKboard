@@ -3,59 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { margin: 0; padding: 0; background-color: #0d1117; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; height: 100vh; overflow: hidden; }
-    .left-panel { width: 38%; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: #161b22; border-right: 1px solid #30363d; overflow-y: auto; }
-    .right-panel { width: 62%; height: 100%; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: #0d1117; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
     
-    #clock { font-size: 3.2rem; font-weight: bold; color: #58a6ff; line-height: 1; }
-    #date { font-size: 1.1rem; color: #8b949e; margin-top: 5px; margin-bottom: 15px; text-transform: capitalize; }
+    .panel-left { width: 50%; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; border-right: 2px solid #30363d; background: #161b22; }
+    .panel-right { width: 50%; padding: 25px; display: flex; flex-direction: column; background: #0d1117; overflow: hidden; }
     
-    .weather-box { background: #21262d; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; }
-    .temp-main { font-size: 2.8rem; font-weight: bold; color: #f0883e; display: inline-block; }
-    .temp-feels { font-size: 1.1rem; color: #8b949e; margin-left: 10px; display: inline-block; }
-    .weather-details { margin-top: 8px; font-size: 0.95rem; color: #c9d1d9; display: flex; gap: 15px; }
-    .forecast-row { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #30363d; font-size: 0.85rem; color: #8b949e; text-align: center; }
+    #clock { font-size: 4rem; font-weight: bold; color: #58a6ff; line-height: 1; }
+    #date { font-size: 1.2rem; color: #8b949e; margin-top: 6px; margin-bottom: 15px; text-transform: capitalize; }
     
-    .rss-box { background: #21262d; padding: 15px; border-radius: 8px; border: 1px solid #30363d; flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; }
-    .rss-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #ffb703; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
-    .rss-container { font-size: 0.88rem; color: #c9d1d9; line-height: 1.4; overflow-y: auto; }
-    .rss-item { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #30363d; }
-    .rss-item-title { font-weight: 600; color: #e6edf3; }
-    .rss-item-desc { font-size: 0.8rem; color: #8b949e; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .weather-card { background: #21262d; padding: 18px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 12px; }
+    .location-tag { font-size: 0.85rem; color: #8b949e; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px; }
+    .temp-row { display: flex; align-items: baseline; justify-content: space-between; }
+    .temp-main { font-size: 3.5rem; font-weight: bold; color: #f0883e; }
+    .temp-feels { font-size: 1.2rem; color: #8b949e; }
+    .weather-stats { margin-top: 10px; font-size: 1rem; color: #c9d1d9; display: flex; gap: 20px; }
+    
+    .forecast-title { font-size: 0.9rem; font-weight: bold; color: #8b949e; margin-top: 10px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .forecast-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; background: #161b22; padding: 10px; border-radius: 8px; border: 1px solid #30363d; }
+    .forecast-item { font-size: 0.85rem; color: #c9d1d9; }
+    .forecast-item div:first-child { color: #8b949e; font-size: 0.75rem; margin-bottom: 4px; }
+    .forecast-item div:last-child { font-weight: bold; color: #58a6ff; }
 
-    iframe { width: 100%; height: 100%; border: none; }
+    .rss-header { font-size: 1.3rem; font-weight: bold; color: #ffb703; border-bottom: 2px solid #30363d; padding-bottom: 8px; margin-bottom: 12px; }
+    .rss-list { overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+    .rss-card { background: #161b22; padding: 12px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 10px; }
+    .rss-title { font-size: 0.95rem; font-weight: 600; color: #e6edf3; line-height: 1.3; }
+    .rss-desc { font-size: 0.8rem; color: #8b949e; margin-top: 5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   </style>
 </head>
 <body>
-  <div class="left-panel">
+  <div class="panel-left">
     <div>
       <div id="clock">00:00</div>
       <div id="date">Laadimine...</div>
       
-      <!-- Ilmaplokk -->
-      <div class="weather-box">
-        <div>
+      <div class="weather-card">
+        <div class="location-tag">TALLINN</div>
+        <div class="temp-row">
           <span class="temp-main" id="temp">--°C</span>
           <span class="temp-feels" id="feels">Tundub: --°C</span>
         </div>
-        <div class="weather-details">
+        <div class="weather-stats">
           <span id="wind">Tuul: -- m/s</span>
           <span id="humidity">Niiskus: --%</span>
         </div>
-        <div class="forecast-row" id="forecast">
-          <span>Laen prognoosi...</span>
-        </div>
       </div>
-    </div>
-    
-    <div class="rss-box">
-      <div class="rss-title">ERR Uudised</div>
-      <div class="rss-container" id="rss-feed">Laen uudiseid...</div>
+
+      <div class="forecast-title">Tallinna tunniprognoos</div>
+      <div class="forecast-grid" id="forecast">
+        <div>Laen...</div>
+      </div>
     </div>
   </div>
 
-  <div class="right-panel">
-    <iframe src="https://www.rainviewer.com/map.html?loc=58.60,25.00,7&o8=1&c=1&o=0&lm=1&a=1"></iframe>
+  <div class="panel-right">
+    <div class="rss-header">ERR Uudised</div>
+    <div class="rss-list" id="rss-feed">Laen uudiseid...</div>
   </div>
 
   <script>
@@ -68,7 +72,8 @@
     updateClock();
 
     function loadWeather() {
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=58.60&longitude=25.00&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m&hourly=temperature_2m&forecast_days=1&timezone=Europe%2FTallinn')
+      // Tallinna koordinaadid: lat=59.4370, lon=24.7535
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=59.4370&longitude=24.7535&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m&hourly=temperature_2m&forecast_days=1&timezone=Europe%2FTallinn')
         .then(res => res.json())
         .then(data => {
           const cur = data.current;
@@ -79,10 +84,10 @@
 
           const currentHour = new Date().getHours();
           let forecastHtml = '';
-          for (let i = 1; i <= 4; i++) {
+          for (let i = 1; i <= 5; i++) {
             const h = (currentHour + i) % 24;
             const t = Math.round(data.hourly.temperature_2m[currentHour + i] || 0);
-            forecastHtml += `<div><b>${h}:00</b><br>${t}°C</div>`;
+            forecastHtml += `<div class="forecast-item"><div>${h}:00</div><div>${t}°C</div></div>`;
           }
           document.getElementById('forecast').innerHTML = forecastHtml;
         })
@@ -95,14 +100,14 @@
       fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.err.ee/rss')
         .then(res => res.json())
         .then(data => {
-          const items = data.items.slice(0, 7);
+          const items = data.items.slice(0, 6);
           let html = '';
           items.forEach(item => {
             const cleanDesc = item.description.replace(/<[^>]*>?/gm, '').trim();
             html += `
-              <div class="rss-item">
-                <div class="rss-item-title">• ${item.title}</div>
-                <div class="rss-item-desc">${cleanDesc}</div>
+              <div class="rss-card">
+                <div class="rss-title">${item.title}</div>
+                <div class="rss-desc">${cleanDesc}</div>
               </div>`;
           });
           document.getElementById('rss-feed').innerHTML = html;
